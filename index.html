@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>صفحة احتفال</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: 'Arial', sans-serif;
+      background: #f0f0f0;
+      padding-top: 100px;
+    }
+    button {
+      font-size: 24px;
+      padding: 15px 30px;
+      background-color: #ff4081;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 9999;
+    }
+  </style>
+</head>
+<body>
+
+  <button onclick="startCelebration()">احتفال</button>
+  <audio id="celebrationAudio" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+  <canvas id="confettiCanvas"></canvas>
+
+  <script>
+    function startCelebration() {
+      const audio = document.getElementById("celebrationAudio");
+      audio.play();
+
+      // Confetti Effect
+      const canvas = document.getElementById('confettiCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const confettiCount = 150;
+      const confetti = [];
+
+      for (let i = 0; i < confettiCount; i++) {
+        confetti.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          r: Math.random() * 6 + 4,
+          d: Math.random() * confettiCount,
+          color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+          tilt: Math.floor(Math.random() * 10) - 10,
+          tiltAngleIncrement: Math.random() * 0.07 + 0.05,
+          tiltAngle: 0
+        });
+      }
+
+      function drawConfetti() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        confetti.forEach((c, i) => {
+          c.tiltAngle += c.tiltAngleIncrement;
+          c.y += (Math.cos(c.d) + 1 + c.r / 2) / 2;
+          c.x += Math.sin(c.d);
+          c.tilt = Math.sin(c.tiltAngle) * 15;
+
+          ctx.beginPath();
+          ctx.lineWidth = c.r;
+          ctx.strokeStyle = c.color;
+          ctx.moveTo(c.x + c.tilt + c.r / 2, c.y);
+          ctx.lineTo(c.x + c.tilt, c.y + c.tilt + c.r / 2);
+          ctx.stroke();
+        });
+        requestAnimationFrame(drawConfetti);
+      }
+
+      drawConfetti();
+    }
+  </script>
+
+</body>
+</html>
